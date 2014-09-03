@@ -44,7 +44,6 @@
 
         <jar destfile="${dest.file}" basedir="${bin.dir}" manifest="${manifest.file}">
         	<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
-            <fileset file="antlib.xml" />
         </jar>
     </target>
 
