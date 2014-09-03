@@ -1,0 +1,10 @@
+<project name="Custom ANT Task Demo"
+  basedir="."
+  default="default"
+  xmlns:my="antlib:com.foo.bar">
+  
+  <target name="default">
+    <my:foobar message="baz qux!" />
+  </target>
+
+</project>

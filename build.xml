@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<project name="ant-task" basedir="." default="default">
+
+    <buildnumber file="build.number"/>
+
+    <property file="build.properties"/>
+    
+    <property environment="env"/>
+
+    <property name="manifest.file" value="manifest.mf"/>
+    <property name="src.dir" value="src"/>
+    <property name="dest.dir" value="build"/>
+    <property name="dest.file" value="${dest.dir}\${ant.project.name}.jar"/>
+    <property name="bin.dir" value="bin"/>
+    <property name="lib.dir" value="lib"/>
+
+    <tstamp>
+        <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+    </tstamp>
+
+    <target name="cleanup" description="Delete all generated files">
+        <delete dir="${bin.dir}" failonerror="false"/>
+        <delete failonerror="false">
+            <fileset dir="${bin.dir}" />
+            <fileset file="${manifest.file}"/>
+       </delete> 
+    </target>
+
+    <target name="compile" description="Compiles the Task">
+        <mkdir dir="${bin.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${bin.dir}"/>
+    </target>
+
+    <target name="jar" description="JARs the Task">
+        <copy todir="${bin.dir}">
+          <fileset dir="${src.dir}" includes="**/antlib.xml"/>
+        </copy>
+
+        <manifest file="${manifest.file}">
+            <attribute name="Built-By" value="${user.name}"/>
+            <attribute name="Implementation-Version" value="${version.number}-b${build.number}"/>
+            <attribute name="Built-Date" value="${TODAY}"/>
+        </manifest>
+
+        <jar destfile="${dest.file}" basedir="${bin.dir}" manifest="${manifest.file}">
+        	<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
+            <fileset file="antlib.xml" />
+        </jar>
+    </target>
+
+    <target name="deploy" description="Deploy JAR file into ANT lib folder">
+        <copy file="${dest.file}" todir="${env.ANT_HOME}\lib" overwrite="true" />
+    </target>
+
+    <target name="default" depends="compile,jar,deploy,cleanup">
+        <echo message="Build of ${ant.project.name}.jar is completed." />
+    </target>
+
+</project>
